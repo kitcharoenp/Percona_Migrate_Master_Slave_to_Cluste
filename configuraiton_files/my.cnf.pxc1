@@ -1,0 +1,81 @@
+#
+# The Percona Server 5.7 configuration file.
+#
+#
+# * IMPORTANT: Additional settings that can override those from this file!
+#   The files must end with '.cnf', otherwise they'll be ignored.
+#   Please make any edits and changes to the appropriate sectional files
+#   included below.
+#
+[mysqld]
+#
+server-id             = 21
+#
+# Allow incoming standard MySQL replication events be replicated
+# to throughout the cluster.
+# This option causes the slave to write the updates performed by its
+# SQL thread to its own binary log
+#
+log_slave_updates
+#
+# Configuring Nodes for Write-Set Replication
+#
+wsrep_provider=/usr/lib/libgalera_smm.so
+
+wsrep_cluster_name=pxc-cluster
+wsrep_cluster_address=gcomm://10.10.10.21,10.10.10.22,10.10.10.20,10.10.10.13,10.10.10.12
+
+wsrep_node_name=pxc1
+wsrep_node_address=10.10.10.21
+
+wsrep_sst_method=xtrabackup-v2
+wsrep_sst_auth=sstuser:passw0rd@state_trf
+
+pxc_strict_mode=ENFORCING
+
+binlog_format=ROW
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+innodb_locks_unsafe_for_binlog  = ON
+
+# The timestamp time zone of error log messages
+# SYSTEM (local system time zone).
+log_timestamps = SYSTEM
+
+# MySQL 5.6 compatibility is enabled
+show_compatibility_56 = ON
+
+
+## Query Cache Enhancements
+table_open_cache_instances=32
+table_open_cache=2500
+max_heap_table_size=64M
+tmp_table_size=64M
+#
+# When the server is compiled with the query cache enabled,
+# the query cache is locked during use by the query cache mutex.
+#
+query_cache_type=0
+query_cache_size=0
+#
+
+# InnoDB settings
+# Typical values are 5-6GB (8GB RAM), 20-25GB (32GB RAM), 100-120GB (128GB RAM).
+innodb_buffer_pool_size=5G
+# innodb_log_file_size=512M
+innodb_flush_method=O_DIRECT
+innodb_buffer_pool_instances = 5
+innodb_read_io_threads=5
+innodb_write_io_threads=5
+
+# other
+sql_mode=''
+character-set-server=utf8
+collation-server=utf8_unicode_ci
+max_allowed_packet	= 20M
+skip_name_resolve=ON
+loose-performance_schema=ON
+
+#
+!includedir /etc/mysql/conf.d/
+!includedir /etc/mysql/percona-server.conf.d/
